@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="app_name">BitmapListing</string>
+	<string name="show_10">Show 10 Replicants</string>
+	<string name="show_100">Show 100 Replicants</string>
+	<string name="show_1000">Show 1000 Replicants</string>
+	<string name="time_to_gen">Time to generate</string>
+	<string name="row">Row: </string>
+	
+</resources>
