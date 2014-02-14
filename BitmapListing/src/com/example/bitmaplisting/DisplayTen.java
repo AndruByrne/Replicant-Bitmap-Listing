@@ -23,7 +23,6 @@ public class DisplayTen extends Activity {
         setContentView( R.layout.display10 );
 		Resources res = getResources( );
 		final ListView listView = (ListView) findViewById( R.id.list_view );
-		final BitmapBundleProvider bitmapBundleProvider = new BitmapBundleProvider( res );
 		final Integer[] arrayDummy = new Integer[TEN_ROWS];
 		final BitmapArrayAdapter bitmapArrayAdapter = new BitmapArrayAdapter(this, res, arrayDummy);
 		listView.setAdapter(bitmapArrayAdapter);

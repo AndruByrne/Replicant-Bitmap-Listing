@@ -7,4 +7,5 @@ public class ViewHolder
 	public ImageView bitmap;
 	public TextView rowNum;
 	public TextView genTime;
+	public int position;
 }
