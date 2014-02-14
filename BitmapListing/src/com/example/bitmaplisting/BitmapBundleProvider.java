@@ -11,15 +11,13 @@ public class BitmapBundleProvider {
 
 	private Random r;
 	private int maxRnd = 500;
-	//private int delay;
 
 	public BitmapBundleProvider( Resources res ) {
 		this.res=res;
-		bitmapBundle = new BitmapBundle();
 	}
 
 	public BitmapBundle getBitmapBundle( ) {
-		
+		bitmapBundle = new BitmapBundle();
 		bitmapBundle.bitmap = BitmapFactory.decodeResource( res, R.drawable.thebitmap);
 				
 		r = new Random();		
@@ -32,8 +30,6 @@ public class BitmapBundleProvider {
 			Log.e( TAG, "Stopped waiting: " + e.toString( ) ); 
 		    bitmapBundle.delay = 0;
 		}
-		Log.i(TAG, "sleep: " + delay);
-
 		return bitmapBundle;
 	}
 }
