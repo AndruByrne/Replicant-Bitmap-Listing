@@ -12,15 +12,16 @@ import android.os.*;
 public class BitmapArrayAdapter extends ArrayAdapter {
 	private final Context context;
 	private final Resources res;
-
-	private static final String TAG = BitmapArrayAdapter.class.getSimpleName( );
-	public BitmapArrayAdapter( Context context, Resources res, Integer[] arrayDummy ) {
+	public static final String TAG = BitmapArrayAdapter.class.getSimpleName( );
+	private FlingListener flingListener;
+	
+	public BitmapArrayAdapter( Context context, FlingListener listener, Resources res, Integer[] arrayDummy ) {
 		super( context, R.layout.row, arrayDummy );
+		flingListener = listener;
 		this.context = context;
 		this.res = res;
-		Log.i( TAG, "constructed" );
 	}
-
+	
 	@Override
 	public View getView( int position, View convertView, ViewGroup parent ) {
 		View rowView;
@@ -38,11 +39,12 @@ public class BitmapArrayAdapter extends ArrayAdapter {
 
 		ViewHolder holder = (ViewHolder) rowView.getTag( );
 		holder.position = position;
-		//attempting to populate skipped rows so they will repopulate
-		//moved to async task
-		new GetBitmapBundle( position, holder, res ).execute( );
 
-//		holder.rowNum.setText( res.getString( R.string.row ) + Integer.toString( position + 1 ) );		
+		//async task
+
+		if( !flingListener.isFlinging() )
+		    new GetBitmapBundle( position, holder, res ).execute( );
+
 		return rowView;
 	}
 
@@ -80,8 +82,7 @@ public class BitmapArrayAdapter extends ArrayAdapter {
 		@Override
 		protected void onPostExecute( BitmapBundle bitmapBundle ) {
 			super.onPostExecute( bitmapBundle );
-			Log.i(TAG, "position: " + position);
-			
+
 			if( asyncHolder.position == position) {
 				asyncHolder.bitmap.setImageBitmap( bitmapBundle.bitmap );
 				asyncHolder.genTime.setText( res.getString( R.string.time_to_gen ) + Integer.toString( bitmapBundle.delay ) );
