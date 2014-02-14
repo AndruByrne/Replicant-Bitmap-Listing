@@ -1,4 +1,4 @@
-package com.example.bitmaplisting;
+package com.example.bitmaplisting.interfaces;
 
 public interface FlingListener{
 	boolean isFlinging();

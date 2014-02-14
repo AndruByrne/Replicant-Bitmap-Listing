@@ -1,5 +1,9 @@
-package com.example.bitmaplisting;
+package com.example.bitmaplisting.activities;
 
+import com.example.bitmaplisting.interfaces.FlingListener;
+import com.example.bitmaplisting.adapters.BitmapArrayAdapter;
+import com.example.bitmaplisting.activities.*;
+import com.example.bitmaplisting.*;
 import android.app.*;
 import android.os.*;
 import android.view.*;
@@ -14,16 +18,14 @@ import android.view.GestureDetector.OnGestureListener;
 import android.view.View.*;
 import android.support.v4.view.GestureDetectorCompat;
 
-public class DisplayTen extends Activity implements FlingListener, OnGestureListener {
+public class DisplayHundred extends Activity implements FlingListener, OnGestureListener {
 //since we do not have any onClicks, it is fine to not use fragments as per instructions
 
-	private boolean flinging = false;
-	private static final String TAG = DisplayTen.class.getSimpleName( );
-	private static final int TEN_ROWS = 10000;
-	public GestureDetectorCompat gestureDetector; 
-	private BitmapArrayAdapter bitmapArrayAdapter;
-	private Scroller scroller;
-	Handler handler;
+	private boolean flinging = false; //true if the list is scrolling
+	private static final int rows = BitmapListing.HUNDRED_ROWS;
+	public GestureDetectorCompat gestureDetector; //to catch flinging
+	private BitmapArrayAdapter bitmapArrayAdapter; //holds the bitmapBundles
+	private Scroller scroller; //tells if the list is scrolling
 
 	@Override
 	public boolean isFlinging( ) {
@@ -37,9 +39,8 @@ public class DisplayTen extends Activity implements FlingListener, OnGestureList
         setContentView( R.layout.display10 );
 		Resources res = getResources( );
 		final ListView listView = (ListView) findViewById( R.id.list_view );
-		final Integer[] arrayDummy = new Integer[TEN_ROWS];
+		final Integer[] arrayDummy = new Integer[rows];
 
-		handler = new Handler( );
 		scroller = new Scroller( this );
 		bitmapArrayAdapter = new BitmapArrayAdapter( this, this, res, arrayDummy );
 		gestureDetector = new GestureDetectorCompat( this, this );
@@ -53,18 +54,24 @@ public class DisplayTen extends Activity implements FlingListener, OnGestureList
     }
 
 	//for the flinging
+
     @Override
-    public boolean onDown( MotionEvent event ) {
-//		Log.i( TAG, "onDowN!!!!!" );
-//		flinging = false; //never, the asyc relies on being the only one to set this
+    public boolean onFling( MotionEvent event1, MotionEvent event2, float velocityX, float velocityY ) {
+		if( ( velocityY > 1000 || velocityX > 1000 ) && !flinging ) {
+			flinging = true;
+			new StopSpinning( scroller ).execute( );
+		    //handler.postDelayed( waitForNoScroll, 750 );
+		}
         return true;
     }
 
-	    private class StopSpinning extends AsyncTask<Void, Void, Boolean> {
-		
+//can't think of a better name, but this checks to see when the spinning stops
+//and then releases the lock on the ArrayAdapter and tells it to refresh
+	private class StopSpinning extends AsyncTask<Void, Void, Boolean> {
+
 		Scroller scroller;
-		
-		public StopSpinning( Scroller scroller ){
+
+		public StopSpinning( Scroller scroller ) {
 			this.scroller = scroller;
 		}
 
@@ -83,19 +90,16 @@ public class DisplayTen extends Activity implements FlingListener, OnGestureList
 				flinging = false;
 				bitmapArrayAdapter.notifyDataSetChanged( );
 			} else if( flinging )
-				new StopSpinning(scroller).execute( );
+				new StopSpinning( scroller ).execute( );
 
 		}
 
 	}
 
     @Override
-    public boolean onFling( MotionEvent event1, MotionEvent event2, float velocityX, float velocityY ) {
-		if( ( velocityY > 1000 || velocityX > 1000 ) && !flinging) {
-			flinging = true;
-			new StopSpinning(scroller).execute( );
-		    //handler.postDelayed( waitForNoScroll, 750 );
-		}
+    public boolean onDown( MotionEvent event ) {
+//		Log.i( TAG, "onDowN!!!!!" );
+//		flinging = false; //never, the asyc relies on being the only one to set this
         return true;
     }
 
@@ -119,34 +123,40 @@ public class DisplayTen extends Activity implements FlingListener, OnGestureList
 
 	@Override
 	public boolean onCreateOptionsMenu( Menu menu ) {
-		MenuItem show100 = menu.add( getString( R.string.show_100 ) );
-		show100.setShowAsAction( MenuItem.SHOW_AS_ACTION_NEVER );
-		show100.setOnMenuItemClickListener( new MenuItem.OnMenuItemClickListener( ){
+		MenuItem show10 = menu.add( getString( R.string.show_10 ) );
+		show10.setShowAsAction( MenuItem.SHOW_AS_ACTION_NEVER );
+		show10.setOnMenuItemClickListener( new MenuItem.OnMenuItemClickListener( ){
 				public boolean onMenuItemClick( MenuItem item ) {
-//				Intent intent = new Intent(DisplayTen.this, DisplayOneHundred.class);
-//				DisplayTen.this.startActivity(intent);
+				Intent intent = new Intent(DisplayHundred.this, DisplayTen.class);
+				DisplayHundred.this.startActivity(intent);
 					return false;
 				}
 			} );
 		MenuItem show1000 = menu.add( getString( R.string.show_1000 ) );
-		show100.setShowAsAction( MenuItem.SHOW_AS_ACTION_NEVER );
-		show100.setOnMenuItemClickListener( new MenuItem.OnMenuItemClickListener( ){
+		show1000.setShowAsAction( MenuItem.SHOW_AS_ACTION_NEVER );
+		show1000.setOnMenuItemClickListener( new MenuItem.OnMenuItemClickListener( ){
 				public boolean onMenuItemClick( MenuItem item ) {
-//					Intent intent = new Intent(DisplayTen.this, DisplayOneThousand.class);
-//					DisplayTen.this.startActivity(intent);
+					Intent intent = new Intent(DisplayHundred.this, DisplayThousand.class);
+					DisplayHundred.this.startActivity(intent);
 					return false;
 				}
 			} );
-		MenuItem show10000 = menu.add( getString( R.string.show_100000 ) );
-		show100.setShowAsAction( MenuItem.SHOW_AS_ACTION_NEVER );
-		show100.setOnMenuItemClickListener( new MenuItem.OnMenuItemClickListener( ){
+		MenuItem show100000 = menu.add( getString( R.string.show_100000 ) );
+		show100000.setShowAsAction( MenuItem.SHOW_AS_ACTION_NEVER );
+		show100000.setOnMenuItemClickListener( new MenuItem.OnMenuItemClickListener( ){
 				public boolean onMenuItemClick( MenuItem item ) {
-//					Intent intent = new Intent(DisplayTen.this, DisplayOneThousand.class);
-//					DisplayTen.this.startActivity(intent);
+					Intent intent = new Intent(DisplayHundred.this, DisplayHundredThousand.class);
+					DisplayHundred.this.startActivity(intent);
 					return false;
 				}
 			} );
 		return true;
+	}
+
+	@Override
+	public void onBackPressed( ) {
+		super.onBackPressed( );
+		moveTaskToBack( true );
 	}
 
 }

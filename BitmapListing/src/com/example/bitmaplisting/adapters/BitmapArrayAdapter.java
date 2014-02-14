@@ -1,4 +1,9 @@
-package com.example.bitmaplisting;
+package com.example.bitmaplisting.adapters;
+
+import com.example.bitmaplisting.activities.*;
+import com.example.bitmaplisting.interfaces.*;
+import com.example.bitmaplisting.structs.*;
+import com.example.bitmaplisting.*;
 import android.widget.ArrayAdapter;
 import android.content.*;
 import android.view.*;
@@ -10,18 +15,18 @@ import android.graphics.*;
 import android.os.*;
 
 public class BitmapArrayAdapter extends ArrayAdapter {
+	public static final String TAG = BitmapArrayAdapter.class.getSimpleName( );
 	private final Context context;
 	private final Resources res;
-	public static final String TAG = BitmapArrayAdapter.class.getSimpleName( );
-	private FlingListener flingListener;
-	
+	private FlingListener flingListener; //the activity that assigned this
+
 	public BitmapArrayAdapter( Context context, FlingListener listener, Resources res, Integer[] arrayDummy ) {
 		super( context, R.layout.row, arrayDummy );
 		flingListener = listener;
 		this.context = context;
 		this.res = res;
 	}
-	
+
 	@Override
 	public View getView( int position, View convertView, ViewGroup parent ) {
 		View rowView;
@@ -35,14 +40,14 @@ public class BitmapArrayAdapter extends ArrayAdapter {
 			initHolder.rowNum = (TextView) rowView.findViewById( R.id.row_num );
 
 			rowView.setTag( initHolder );
-			} else rowView = convertView;
+		} else rowView = convertView;
 
 		ViewHolder holder = (ViewHolder) rowView.getTag( );
 		holder.position = position;
 
 		//async task
 
-		if( !flingListener.isFlinging() )
+		if( !flingListener.isFlinging( ) )
 		    new GetBitmapBundle( position, holder, res ).execute( );
 
 		return rowView;
@@ -83,7 +88,7 @@ public class BitmapArrayAdapter extends ArrayAdapter {
 		protected void onPostExecute( BitmapBundle bitmapBundle ) {
 			super.onPostExecute( bitmapBundle );
 
-			if( asyncHolder.position == position) {
+			if( asyncHolder.position == position ) {
 				asyncHolder.bitmap.setImageBitmap( bitmapBundle.bitmap );
 				asyncHolder.genTime.setText( res.getString( R.string.time_to_gen ) + Integer.toString( bitmapBundle.delay ) );
 				asyncHolder.rowNum.setText( res.getString( R.string.row ) + Integer.toString( asyncHolder.position + 1 ) );

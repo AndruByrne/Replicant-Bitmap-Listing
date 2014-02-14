@@ -1,4 +1,4 @@
-package com.example.bitmaplisting;
+package com.example.bitmaplisting.structs;
 import android.widget.TextView;
 import android.widget.ImageView;
 
